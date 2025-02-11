@@ -1,0 +1,5 @@
+rootProject.name = 'admin-menu-movie'
+include 'domain'
+include 'application'
+include 'infrastructure'
+
