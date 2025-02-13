@@ -1,6 +1,9 @@
 package com.admin.menu.movie.domain.category;
 
+import com.admin.menu.movie.domain.exceptions.DomainException;
+import com.admin.menu.movie.domain.validation.handler.ThrowsValidationHandler;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class CategoryTest {

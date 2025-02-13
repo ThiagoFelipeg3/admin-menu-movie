@@ -5,7 +5,7 @@ import com.admin.menu.movie.domain.Identifier;
 import java.util.Objects;
 import java.util.UUID;
 
-public class CategoryID  extends Identifier {
+public class CategoryID extends Identifier {
 
     private final String value;
 

@@ -1,4 +1,4 @@
 package com.admin.menu.movie.domain.validation;
 
-public record Error() {
+public record Error(String message) {
 }
