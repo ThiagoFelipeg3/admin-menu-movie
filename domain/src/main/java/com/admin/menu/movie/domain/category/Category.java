@@ -1,9 +1,9 @@
 package com.admin.menu.movie.domain.category;
 
 import com.admin.menu.movie.domain.AggregateRoot;
+import com.admin.menu.movie.domain.validation.ValidationHandler;
 
 import java.time.Instant;
-import java.util.UUID;
 
 public class Category extends AggregateRoot<CategoryID> {
 
