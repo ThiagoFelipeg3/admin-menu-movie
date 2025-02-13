@@ -26,4 +26,21 @@ public class CategoryTest {
         Assertions.assertNotNull(category.getUpdatedAt());
         Assertions.assertNull(category.getDeletedAt());
     }
+
+    @Test
+    @DisplayName("Deve disparar um erro quando passar um nome nulo")
+    public void shouldThrowAnExceptionWhenPassingANullName() {
+        final var description = "Any Description";
+        final var isActive = true;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' should not be null";
+
+        final var actualCategory = Category.newCategory(null, description, isActive);
+        final var actualException =
+                Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+    }
 }
