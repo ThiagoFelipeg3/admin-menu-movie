@@ -40,7 +40,98 @@ public class CategoryTest {
                 Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().getFirst().message());
 
+    }
+
+    @Test
+    @DisplayName("Deve disparar um erro quando passar um nome vazio")
+    public void shouldThrowAnExceptionWhenPassingAEmptyName() {
+        final var isActive = true;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' should not be empty";
+
+        final var actualCategory = Category.newCategory(" ", "Any Description", isActive);
+        final var actualException =
+                Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().getFirst().message());
+
+    }
+
+    @Test
+    @DisplayName("Deve disparar um erro quando passar um nome com menos de 3 caracteres")
+    public void shouldThrowAnExceptionWhenPassingANameLengthLessThan3() {
+        final var isActive = true;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' must be between 3 and 255 characters";
+
+        final var actualCategory = Category.newCategory("Fi ", "Any Description", isActive);
+        final var actualException =
+                Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().getFirst().message());
+
+    }
+
+    @Test
+    @DisplayName("Deve disparar um erro quando passar um nome maior que 255 caracteres")
+    public void shouldThrowAnExceptionWhenPassingANameLengthMoreThan255() {
+        final var expetedName = """
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum luctus mi, at semper elit pharetra eget.
+                Curabitur fermentum maximus lacinia. Suspendisse potenti. Sed ut placerat ex. Sed eu gravida dolor, non feugiat enim.
+                Ut sit amet tellus sit amet nibh bibendum facilisis.
+                """;
+        final var isActive = true;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' must be between 3 and 255 characters";
+
+        final var actualCategory = Category.newCategory(expetedName, "Any Description", isActive);
+        final var actualException =
+                Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().getFirst().message());
+
+    }
+
+    @Test
+    public void shouldBeFineWhenYouGiveAnEmptyDescription() {
+        final var name = "Any name Movie";
+        final var description = " ";
+        final var isActive = true;
+        final var category = Category.newCategory(name, description, isActive);
+
+        Assertions.assertDoesNotThrow(() -> category.validate(new ThrowsValidationHandler()));
+        Assertions.assertNotNull(category);
+        Assertions.assertNotNull(category.getId());
+        Assertions.assertEquals(name, category.getName());
+        Assertions.assertEquals(description, category.getDescription());
+        Assertions.assertEquals(isActive, category.isActive());
+
+        Assertions.assertNotNull(category.getCreatedAt());
+        Assertions.assertNotNull(category.getUpdatedAt());
+        Assertions.assertNull(category.getDeletedAt());
+    }
+
+    @Test
+    public void shouldBeFineWhenYouPassTheIsActiveFalseParameter() {
+        final var name = "Any name Movie";
+        final var description = "Any description movie";
+        final var isActive = false;
+        final var category = Category.newCategory(name, description, isActive);
+
+        Assertions.assertDoesNotThrow(() -> category.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertNotNull(category);
+        Assertions.assertNotNull(category.getId());
+        Assertions.assertEquals(name, category.getName());
+        Assertions.assertEquals(description, category.getDescription());
+        Assertions.assertEquals(isActive, category.isActive());
+        Assertions.assertNotNull(category.getCreatedAt());
+        Assertions.assertNotNull(category.getUpdatedAt());
+        Assertions.assertNotNull(category.getDeletedAt());
     }
 }
