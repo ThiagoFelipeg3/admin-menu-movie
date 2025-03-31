@@ -134,4 +134,37 @@ public class CategoryTest {
         Assertions.assertNotNull(category.getUpdatedAt());
         Assertions.assertNotNull(category.getDeletedAt());
     }
+
+    @Test
+    public void shouldDisableACategory() {
+        final var name = "Any name Movie";
+        final var description = "Any description movie";
+        final var isActive = true;
+        final var category = Category.newCategory(name, description, isActive);
+
+        Assertions.assertDoesNotThrow(() -> category.validate(new ThrowsValidationHandler()));
+
+        final var createdAt = category.getCreatedAt();
+        final var updatedAt = category.getUpdatedAt();
+
+        Assertions.assertTrue(category.isActive());
+        Assertions.assertNull(category.getDeletedAt());
+
+        final var actualCategory = category.deactivate();
+
+        Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertEquals(category.getId(), actualCategory.getId());
+        Assertions.assertEquals(name, actualCategory.getName());
+        Assertions.assertEquals(description, actualCategory.getDescription());
+        Assertions.assertFalse(actualCategory.isActive());
+        Assertions.assertEquals(createdAt, actualCategory.getCreatedAt());
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
+        Assertions.assertNotNull(actualCategory.getDeletedAt());
+    }
 }
+
+
+
+
+
