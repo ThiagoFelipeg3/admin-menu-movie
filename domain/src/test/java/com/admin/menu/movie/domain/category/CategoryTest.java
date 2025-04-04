@@ -245,7 +245,31 @@ public class CategoryTest {
         Assertions.assertEquals(description, actualCategory.getDescription());
         Assertions.assertEquals(createdAt, actualCategory.getCreatedAt());
         Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
+    }
 
+    @Test
+    public void shouldUpdateACategoryWithInvalidData() {
+        final String name = null;
+        final var description = "Any description movie updated";
+        final var isActive = true;
+
+        final var category =
+                Category.newCategory("Any Name Movie", "Any description movie", isActive);
+
+        Assertions.assertDoesNotThrow(() -> category.validate(new ThrowsValidationHandler()));
+
+        final var createdAt = category.getCreatedAt();
+        final var updatedAt = category.getUpdatedAt();
+
+        final var actualCategory = category.update(name, description, isActive);
+
+        Assertions.assertEquals(category.getId(), actualCategory.getId());
+        Assertions.assertEquals(name, actualCategory.getName());
+        Assertions.assertEquals(description, actualCategory.getDescription());
+        Assertions.assertTrue(actualCategory.isActive());
+        Assertions.assertEquals(createdAt, actualCategory.getCreatedAt());
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
+        Assertions.assertNull(actualCategory.getDeletedAt());
     }
 }
 
