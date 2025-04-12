@@ -1,4 +1,5 @@
 package com.admin.menu.movie.application;
 
-public class UnitUseCase {
+public abstract class UnitUseCase<IN> {
+	public abstract void execute(IN in);
 }
