@@ -104,4 +104,31 @@ public class CreateCategoryUseCaseTest {
 							&& Objects.nonNull(category.getDeletedAt());
 				}));
 	}
+
+	@Test
+	public void givenAValidCommand_whenGatewayThrowsRandomException_shouldReturnException() {
+		final var expectedName = "Any Movie";
+		final var expectedDescription = "Any description";
+		final var expectedIsActive = true;
+		final var expectedErroMessage = "Gateway error";
+
+		final var command = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+
+		when(categoryGateway.create(any())).thenThrow(new IllegalStateException(expectedErroMessage));
+
+		final var actualError = Assertions.assertThrows(IllegalStateException.class, () -> useCase.execute(command));
+
+		Assertions.assertEquals(expectedErroMessage, actualError.getMessage());
+
+		Mockito.verify(categoryGateway, times(1))
+				.create(argThat(category -> {
+					return Objects.equals(expectedName, category.getName())
+							&& Objects.equals(expectedDescription, category.getDescription())
+							&& Objects.equals(expectedIsActive, category.isActive())
+							&& Objects.nonNull(category.getId())
+							&& Objects.nonNull(category.getCreatedAt())
+							&& Objects.nonNull(category.getUpdatedAt())
+							&& Objects.isNull(category.getDeletedAt());
+				}));
+	}
 }
