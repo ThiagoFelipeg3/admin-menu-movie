@@ -27,6 +27,8 @@ public class CreateCategoryUseCaseTest {
 	@Mock
 	private CategoryGateway categoryGateway;
 
+
+
 	@Test
 	public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
 		final var expectedName = "Any Movie";
@@ -74,5 +76,32 @@ public class CreateCategoryUseCaseTest {
 		Assertions.assertEquals(expectedErrorMessage, actualError.getMessage());
 
 		Mockito.verify(categoryGateway, times(expectedErrorCount)).create(any());
+	}
+
+	@Test
+	public void givenAValidCommandWithInactiveCategory_whenCallsCreateCategory_shouldReturnInactiveCategoryId() {
+		final var expectedName = "Any Movie";
+		final var expectedDescription = "Any description";
+		final var expectedIsActive = false;
+
+		final var command = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
+
+		when(categoryGateway.create(any())).thenAnswer(returnsFirstArg());
+
+		final var actualOutput = useCase.execute(command);
+
+		Assertions.assertNotNull(actualOutput);
+		Assertions.assertNotNull(actualOutput.id());
+
+		Mockito.verify(categoryGateway, times(1))
+				.create(argThat(category -> {
+					return Objects.equals(expectedName, category.getName())
+							&& Objects.equals(expectedDescription, category.getDescription())
+							&& Objects.equals(expectedIsActive, category.isActive())
+							&& Objects.nonNull(category.getId())
+							&& Objects.nonNull(category.getCreatedAt())
+							&& Objects.nonNull(category.getUpdatedAt())
+							&& Objects.nonNull(category.getDeletedAt());
+				}));
 	}
 }
