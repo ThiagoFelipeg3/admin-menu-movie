@@ -38,4 +38,8 @@ public class CategoryID extends Identifier {
     public int hashCode() {
         return Objects.hashCode(value);
     }
+
+    public String getValue() {
+        return this.value;
+    }
 }
