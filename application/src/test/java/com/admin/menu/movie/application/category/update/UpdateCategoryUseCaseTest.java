@@ -48,7 +48,7 @@ public class UpdateCategoryUseCaseTest {
 		 * então eu quero que retorna um Optional<category>
 		 */
 		when(categoryGateway.findById(eq(expectedId)))
-				.thenReturn(Optional.of(category));
+				.thenReturn(Optional.of(category.clone()));
 
 		/**
 		 * Quando o CategoryGateway metodo update for chamado com qualquer coisa(any)
@@ -79,7 +79,7 @@ public class UpdateCategoryUseCaseTest {
 								&& Objects.equals(expectedIsActive, updateCategory.isActive())
 								&& Objects.equals(expectedId, updateCategory.getId())
 								&& Objects.equals(category.getCreatedAt(), updateCategory.getCreatedAt())
-								&& Objects.equals(category.getUpdatedAt(), updateCategory.getUpdatedAt())
+								&& category.getUpdatedAt().isBefore(updateCategory.getUpdatedAt())
 								&& Objects.isNull(updateCategory.getDeletedAt())
 		));
 	}
