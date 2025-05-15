@@ -112,4 +112,49 @@ public class UpdateCategoryUseCaseTest {
 
 		Mockito.verify(categoryGateway, times(0)).update(any());
 	}
+
+	@Test
+	public void givenAValidInactivateCommand_whenCallsUpdateCategory_shouldReturnInactiveCategoryId() {
+		final var category =
+				Category.newCategory("Film", null, true);
+
+		final var expectedName = "Filmes";
+		final var expectedDescription = "A categoria mais assistida";
+		final var expectedIsActive = false;
+		final var expectedId = category.getId();
+
+		final var aCommand = UpdateCategoryCommand.with(
+				expectedId.getValue(),
+				expectedName,
+				expectedDescription,
+				expectedIsActive
+		);
+
+		when(categoryGateway.findById(eq(expectedId)))
+				.thenReturn(Optional.of(Category.with(category)));
+
+		when(categoryGateway.update(any()))
+				.thenAnswer(returnsFirstArg());
+
+		Assertions.assertTrue(category.isActive());
+		Assertions.assertNull(category.getDeletedAt());
+
+		final var actualOutput = useCase.execute(aCommand).get();
+
+		Assertions.assertNotNull(actualOutput);
+		Assertions.assertNotNull(actualOutput.id());
+
+		Mockito.verify(categoryGateway, times(1)).findById(eq(expectedId));
+
+		Mockito.verify(categoryGateway, times(1)).update(argThat(
+				aUpdatedCategory ->
+						Objects.equals(expectedName, aUpdatedCategory.getName())
+								&& Objects.equals(expectedDescription, aUpdatedCategory.getDescription())
+								&& Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
+								&& Objects.equals(expectedId, aUpdatedCategory.getId())
+								&& Objects.equals(category.getCreatedAt(), aUpdatedCategory.getCreatedAt())
+								&& category.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
+								&& Objects.nonNull(aUpdatedCategory.getDeletedAt())
+		));
+	}
 }
