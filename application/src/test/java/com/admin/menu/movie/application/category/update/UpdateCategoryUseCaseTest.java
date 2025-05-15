@@ -2,6 +2,8 @@ package com.admin.menu.movie.application.category.update;
 
 import com.admin.menu.movie.domain.category.Category;
 import com.admin.menu.movie.domain.category.CategoryGateway;
+import com.admin.menu.movie.domain.category.CategoryID;
+import com.admin.menu.movie.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -160,13 +162,13 @@ public class UpdateCategoryUseCaseTest {
 
 	@Test
 	public void givenAValidCommand_whenGatewayThrowsRandomException_shouldReturnAException() {
-		final var aCategory =
+		final var category =
 				Category.newCategory("Film", null, true);
 
 		final var expectedName = "Filmes";
 		final var expectedDescription = "A categoria mais assistida";
 		final var expectedIsActive = true;
-		final var expectedId = aCategory.getId();
+		final var expectedId = category.getId();
 		final var expectedErrorCount = 1;
 		final var expectedErrorMessage = "Gateway error";
 
@@ -178,7 +180,7 @@ public class UpdateCategoryUseCaseTest {
 		);
 
 		when(categoryGateway.findById(eq(expectedId)))
-				.thenReturn(Optional.of(Category.with(aCategory)));
+				.thenReturn(Optional.of(Category.with(category)));
 
 		// Força o lançamento de uma exceção ao chamar o método updete do gateway
 		when(categoryGateway.update(any()))
@@ -195,9 +197,37 @@ public class UpdateCategoryUseCaseTest {
 								&& Objects.equals(expectedDescription, aUpdatedCategory.getDescription())
 								&& Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
 								&& Objects.equals(expectedId, aUpdatedCategory.getId())
-								&& Objects.equals(aCategory.getCreatedAt(), aUpdatedCategory.getCreatedAt())
-								&& aCategory.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
+								&& Objects.equals(category.getCreatedAt(), aUpdatedCategory.getCreatedAt())
+								&& category.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
 								&& Objects.isNull(aUpdatedCategory.getDeletedAt())
 		));
+	}
+
+	@Test
+	public void givenACommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() {
+		final var expectedName = "Filmes";
+		final var expectedDescription = "A categoria mais assistida";
+		final var expectedIsActive = false;
+		final var expectedId = "123";
+		final var expectedErrorMessage = "Category with ID 123 was not found";
+
+		final var aCommand = UpdateCategoryCommand.with(
+				expectedId,
+				expectedName,
+				expectedDescription,
+				expectedIsActive
+		);
+
+		when(categoryGateway.findById(eq(CategoryID.from(expectedId))))
+				.thenReturn(Optional.empty());
+
+		final var actualException =
+				Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+
+		Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+
+		Mockito.verify(categoryGateway, times(1)).findById(eq(CategoryID.from(expectedId)));
+
+		Mockito.verify(categoryGateway, times(0)).update(any());
 	}
 }
