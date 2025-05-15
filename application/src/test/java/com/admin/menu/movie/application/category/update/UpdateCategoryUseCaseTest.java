@@ -157,4 +157,47 @@ public class UpdateCategoryUseCaseTest {
 								&& Objects.nonNull(updatedCategory.getDeletedAt())
 		));
 	}
+
+	@Test
+	public void givenAValidCommand_whenGatewayThrowsRandomException_shouldReturnAException() {
+		final var aCategory =
+				Category.newCategory("Film", null, true);
+
+		final var expectedName = "Filmes";
+		final var expectedDescription = "A categoria mais assistida";
+		final var expectedIsActive = true;
+		final var expectedId = aCategory.getId();
+		final var expectedErrorCount = 1;
+		final var expectedErrorMessage = "Gateway error";
+
+		final var aCommand = UpdateCategoryCommand.with(
+				expectedId.getValue(),
+				expectedName,
+				expectedDescription,
+				expectedIsActive
+		);
+
+		when(categoryGateway.findById(eq(expectedId)))
+				.thenReturn(Optional.of(Category.with(aCategory)));
+
+		// Força o lançamento de uma exceção ao chamar o método updete do gateway
+		when(categoryGateway.update(any()))
+				.thenThrow(new IllegalStateException(expectedErrorMessage));
+
+		final var notification = useCase.execute(aCommand).getLeft();
+
+		Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+		Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+
+		Mockito.verify(categoryGateway, times(1)).update(argThat(
+				aUpdatedCategory ->
+						Objects.equals(expectedName, aUpdatedCategory.getName())
+								&& Objects.equals(expectedDescription, aUpdatedCategory.getDescription())
+								&& Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
+								&& Objects.equals(expectedId, aUpdatedCategory.getId())
+								&& Objects.equals(aCategory.getCreatedAt(), aUpdatedCategory.getCreatedAt())
+								&& aCategory.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
+								&& Objects.isNull(aUpdatedCategory.getDeletedAt())
+		));
+	}
 }
