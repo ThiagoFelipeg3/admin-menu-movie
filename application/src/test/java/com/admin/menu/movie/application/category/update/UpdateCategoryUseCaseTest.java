@@ -123,7 +123,7 @@ public class UpdateCategoryUseCaseTest {
 		final var expectedIsActive = false;
 		final var expectedId = category.getId();
 
-		final var aCommand = UpdateCategoryCommand.with(
+		final var command = UpdateCategoryCommand.with(
 				expectedId.getValue(),
 				expectedName,
 				expectedDescription,
@@ -139,7 +139,7 @@ public class UpdateCategoryUseCaseTest {
 		Assertions.assertTrue(category.isActive());
 		Assertions.assertNull(category.getDeletedAt());
 
-		final var actualOutput = useCase.execute(aCommand).get();
+		final var actualOutput = useCase.execute(command).get();
 
 		Assertions.assertNotNull(actualOutput);
 		Assertions.assertNotNull(actualOutput.id());
@@ -147,14 +147,14 @@ public class UpdateCategoryUseCaseTest {
 		Mockito.verify(categoryGateway, times(1)).findById(eq(expectedId));
 
 		Mockito.verify(categoryGateway, times(1)).update(argThat(
-				aUpdatedCategory ->
-						Objects.equals(expectedName, aUpdatedCategory.getName())
-								&& Objects.equals(expectedDescription, aUpdatedCategory.getDescription())
-								&& Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
-								&& Objects.equals(expectedId, aUpdatedCategory.getId())
-								&& Objects.equals(category.getCreatedAt(), aUpdatedCategory.getCreatedAt())
-								&& category.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
-								&& Objects.nonNull(aUpdatedCategory.getDeletedAt())
+				updatedCategory ->
+						Objects.equals(expectedName, updatedCategory.getName())
+								&& Objects.equals(expectedDescription, updatedCategory.getDescription())
+								&& Objects.equals(expectedIsActive, updatedCategory.isActive())
+								&& Objects.equals(expectedId, updatedCategory.getId())
+								&& Objects.equals(category.getCreatedAt(), updatedCategory.getCreatedAt())
+								&& category.getUpdatedAt().isBefore(updatedCategory.getUpdatedAt())
+								&& Objects.nonNull(updatedCategory.getDeletedAt())
 		));
 	}
 }
