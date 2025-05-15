@@ -83,4 +83,33 @@ public class UpdateCategoryUseCaseTest {
 								&& Objects.isNull(updateCategory.getDeletedAt())
 		));
 	}
+
+	@Test
+	public void givenAInvalidCommand_whenCallsUpdateCategory_shouldReturnDomainException() {
+		final var category =
+				Category.newCategory("Film", null, true);
+		final String expectedName = null;
+		final var expectedDescription = "Any description";
+		final var expectedIsActive = true;
+		final var expectedErrorMessage = "'name' should not be null";
+		final var expectedErrorCount = 1;
+		final var expectedId = category.getId();
+
+		final var command = UpdateCategoryCommand.with(
+				expectedId.getValue(),
+				expectedName,
+				expectedDescription,
+				expectedIsActive
+		);
+
+		when(categoryGateway.findById(eq(expectedId)))
+				.thenReturn(Optional.of(category.clone()));
+
+		final var notification = useCase.execute(command).getLeft();
+
+		Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+		Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+
+		Mockito.verify(categoryGateway, times(0)).update(any());
+	}
 }
