@@ -58,4 +58,17 @@ public class DeleteCategoryUseCaseTest {
 
 		Mockito.verify(categoryGateway, times(1)).deleteById(eq(id));
 	}
+
+	@Test
+	public void givenAValidId_whenGatewayThrowsException_shouldReturnException() {
+		Category category = Category.newCategory("Movies", "Any Description", true);
+		CategoryID id = category.getId();
+
+		doThrow(new IllegalStateException("Gateway error"))
+				.when(categoryGateway).deleteById(eq(id));
+
+		Assertions.assertThrows(IllegalStateException.class, () -> useCase.execute(id.getValue()));
+
+		Mockito.verify(categoryGateway, times(1)).deleteById(eq(id));
+	}
 }
