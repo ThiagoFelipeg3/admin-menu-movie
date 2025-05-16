@@ -39,4 +39,23 @@ public class DeleteCategoryUseCaseTest {
 
 		Mockito.verify(categoryGateway, times(1)).deleteById(eq(id));
 	}
+
+	/**
+	 * Como descrito no curso este é um teste inútil isso porque o categoryGateway não retorna nada
+	 * e eu não quero que faça nada quando passar um ID invalido ou que não exista.
+	 *
+	 * Mas é interessante manter para que caso ocorra um cenário parecido já tenha um teste que cobre
+	 * ou que apresente oque eu espero.
+	 */
+	@Test
+	public void givenAInvalidId_whenCallsDeleteCategory_shouldBeOK() {
+		CategoryID id = CategoryID.from("123");
+
+		doNothing()
+				.when(categoryGateway).deleteById(eq(id));
+
+		Assertions.assertDoesNotThrow(() -> useCase.execute(id.getValue()));
+
+		Mockito.verify(categoryGateway, times(1)).deleteById(eq(id));
+	}
 }
