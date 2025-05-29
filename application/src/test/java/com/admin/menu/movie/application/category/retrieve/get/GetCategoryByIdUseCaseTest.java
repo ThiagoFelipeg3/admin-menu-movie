@@ -1,12 +1,14 @@
-package com.admin.menu.movie.application.category.retrieve;
+package com.admin.menu.movie.application.category.retrieve.get;
 
 import com.admin.menu.movie.domain.category.Category;
 import com.admin.menu.movie.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -24,9 +26,9 @@ public class GetCategoryByIdUseCaseTest {
 	@Mock
 	private CategoryGateway categoryGateway;
 
-	@Override
-	protected List<Object> getMocks() {
-		return List.of(categoryGateway);
+	@BeforeEach
+	void cleanUp() {
+		Mockito.reset(categoryGateway);
 	}
 
 	@Test
