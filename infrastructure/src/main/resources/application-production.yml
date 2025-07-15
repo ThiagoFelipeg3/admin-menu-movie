@@ -1,0 +1,12 @@
+mysql:
+  username: ${DATABASE_USER_NAME:root}
+  password: ${DATABASE_PASSWORD:123456}
+  schema: ${DATABASE_SCHEMA:adm_movies}
+  url: ${DATABASE_URL:localhost:3306}
+
+
+spring:
+  jpa:
+    show-sql: true # Apresenta todas as query's executadas, ótimo para troubleshooting
+    hibernate:
+      ddl-auto: none # Gerencia os comando de definição do banco como CREATE, ALTER, UPDATE, DROP, TRUNCATE
