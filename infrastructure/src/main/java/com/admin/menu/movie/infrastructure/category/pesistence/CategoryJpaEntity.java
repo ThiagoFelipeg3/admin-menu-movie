@@ -55,7 +55,7 @@ public class CategoryJpaEntity {
 		this.deletedAt = deletedAt;
 	}
 
-	private static CategoryJpaEntity from(final Category category) {
+	public static CategoryJpaEntity from(final Category category) {
 		return new CategoryJpaEntity(
 				category.getId().getValue(),
 				category.getName(),
