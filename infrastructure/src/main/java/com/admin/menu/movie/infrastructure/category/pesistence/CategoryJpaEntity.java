@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 public class CategoryJpaEntity {
 	@Id
 	public String id;
@@ -30,7 +30,7 @@ public class CategoryJpaEntity {
 	@Column(name = "updatedAt", nullable = false, columnDefinition = "DATETIME(6)")
 	public Instant updatedAt;
 
-	@Column(name = "deletedAt", nullable = false, columnDefinition = "DATETIME(6)")
+	@Column(name = "deletedAt", nullable = true, columnDefinition = "DATETIME(6)")
 	public Instant deletedAt;
 
 	public CategoryJpaEntity() {
