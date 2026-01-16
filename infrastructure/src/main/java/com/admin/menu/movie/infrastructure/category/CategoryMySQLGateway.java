@@ -5,6 +5,7 @@ import com.admin.menu.movie.domain.category.CategoryGateway;
 import com.admin.menu.movie.domain.category.CategoryID;
 import com.admin.menu.movie.domain.category.CategorySearchQuery;
 import com.admin.menu.movie.domain.pagination.Pagination;
+import com.admin.menu.movie.infrastructure.category.pesistence.CategoryJpaEntity;
 import com.admin.menu.movie.infrastructure.category.pesistence.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
 	@Override
 	public Category create(Category category) {
-		return null;
+		return repository.save(CategoryJpaEntity.from(category)).toAggregate();
 	}
 
 	@Override
