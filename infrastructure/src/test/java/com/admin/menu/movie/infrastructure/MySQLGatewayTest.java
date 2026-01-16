@@ -18,9 +18,9 @@ import java.util.Collection;
 @Inherited
 @ActiveProfiles("test")
 /**
- * Utilizando o DataJpaTest a classe CategoryMySQLGateway não é reconhecida,
- * e utilizar o SpringBootTest não é interessante porque o mesmo carrega todas
- * as dependencies do projeto a cada teste.
+ * Utilizando o DataJpaTest a classe CategoryMySQLGateway não é reconhecida isso porque esta anotado com o @Service,
+ * e utilizar o SpringBootTest não é interessante porque o mesmo carrega todas as dependencies do projeto a cada teste.
+ * O SpringBootTest é interessante utilizar quando estamos realizando teste end-to-end.
  *
  * Por isso utilizei o ComponentScan desta forma, filtrando todas as classes que finaliza MySQLGateway
  * resolvendo este problema.
